@@ -131,6 +131,11 @@ img {
 
  }
 
+ #form {
+  display: flex;
+  justify-content: center;
+ }
+
  .search::placeholder {
   color: #fff;
  }
