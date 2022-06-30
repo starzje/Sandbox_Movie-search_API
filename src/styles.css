@@ -124,3 +124,14 @@ img {
 .summary {
  display: block
 }
+
+@media screen and (max-width: 600px) {
+ #search {
+  width: 50%;
+
+ }
+
+ .search::placeholder {
+  color: #fff;
+ }
+}
