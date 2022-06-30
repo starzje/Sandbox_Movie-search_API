@@ -136,7 +136,11 @@ img {
   justify-content: center;
  }
 
- .search::placeholder {
-  color: #fff;
+ .ne-postoji {
+
+  align-items: flex-start;
+
  }
+
+
 }
