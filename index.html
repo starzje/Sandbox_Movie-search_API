@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="src/styles.css" />
+    <script
+      src="https://kit.fontawesome.com/adf56416fe.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="./src/index.js" defer></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <header>
+      <h1 class="title">Pretraži filmove</h1>
+      <form id="form">
+        <input type="text" onfocus="this.value=``"" id="search"
+        placeholder="Unesite ime filma" class="search" />
+        <button id="btn">
+          Pretrazi <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
+    </header>
+    <main id="results"></main>
+  </body>
+</html>
