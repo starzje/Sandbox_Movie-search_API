@@ -1,37 +1,57 @@
-document.getElementById("btn").addEventListener("click", pozoviServer);
+const button = document.getElementById("btn");
+const spinner = document.getElementById("spinner");
+const inputField = document.getElementById("search");
+const ispisRezultata = document.getElementById("results");
 
-function pozoviServer(e) {
+button.addEventListener("click", pozoviServer);
+
+// debounce funkcija za ograničavanje poziva servera
+const debounce = (fn, delay) => {
+  let timeout = null;
+  return (...args) => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      fn(...args);
+    }, delay);
+  };
+};
+
+// na bilo kakav input pozivamo glavni search app uz debounce funkciju za ograničavanje poziva servera na 1.5sec
+inputField.addEventListener("input", debounce(pozoviServer, 1500));
+
+// pozivamo server asnyc funkcijom za pozivanje API-ja
+async function pozoviServer(e) {
+  // dodajemo spinner za loadanje dok se dohvacaju podaci
+  spinner.classList.remove("deactivated");
+  // zaustavlja defualt akciju forme
   e.preventDefault();
-  let termin = e.target.previousElementSibling.value;
-  fetch(`https://api.tvmaze.com/search/shows?q=${termin}`)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.length === 0) {
-        document.getElementById(
-          "results"
-        ).innerHTML = `<div class="container"><div class="card"><h4 class="ne-postoji"><i class="fa-solid fa-triangle-exclamation"></i>  ${termin} ne postoji   <i class="fa-solid fa-triangle-exclamation"></i></h4></div></div>`;
-      } else {
-        ubaciRezultateUDom(data, document.getElementById("results"));
-        console.log(data);
-      }
-    });
+  let termin = inputField.value;
+  let odgovor = await fetch(`https://api.tvmaze.com/search/shows?q=${termin}`);
+  odgovor = await odgovor.json();
+  spinner.classList.remove("active");
+  spinner.classList.add("deactivated");
+  // ako nema rezultata, ispisujemo ovaj tekst
+  if (odgovor.length === 0) {
+    ispisRezultata.innerHTML = `<div class="container"><h4 class="ne-postoji"><i class="fa-solid fa-triangle-exclamation"></i>  ${termin} ne postoji   <i class="fa-solid fa-triangle-exclamation"></i></h4></div>`;
+  } else {
+    ubaciRezultateUDom(odgovor);
+  }
 }
 
-function ubaciRezultateUDom(data, element) {
+// funkcija za ubacivanje rezultata u DOM
+function ubaciRezultateUDom(odgovor) {
   let rezultat = `<div class="container">`;
-  data.forEach((film) => {
+  odgovor.forEach((film) => {
     // ako nema ratinga, ispisujemo ovaj tekst
     let rating = film.show.rating.average;
     if (rating == null) {
       rating = "Ovaj film nije još ocijenjen";
     }
-    // ako nema slike
+    // ako nema slike, stavljamo placeholder
     let image = film.show.image
       ? film.show.image.medium
       : "https://via.placeholder.com/210x295/ffffff/666666/?text=TV";
-    rezultat += ` 
-
-<div class="card">
+    rezultat += `<div class="card">
       <div class="card__image">
         <img
               src="${image}"
@@ -51,6 +71,5 @@ function ubaciRezultateUDom(data, element) {
       `;
   });
   rezultat += "</div>";
-  element.innerHTML = rezultat;
-  document.getElementById("search").value = "";
+  ispisRezultata.innerHTML = rezultat;
 }
